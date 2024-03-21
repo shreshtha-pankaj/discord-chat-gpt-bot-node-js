@@ -12,8 +12,8 @@ https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
 
 ### OpenAi Setup
 1. Register on openai portal, https://platform.openai.com/api-keys  
-2. Make sure you have avaiilable credits
-2. Generate a token and update it in the .env(OPEN_API_TOKEN) file
+2. Make sure you have available credits
+2. Generate a Secret key and update it in the .env(OPEN_API_KEY) file
 
 ### Running the service
 1. `npm install`

@@ -5,14 +5,20 @@
   "type": "module",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./src/bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint 'src/**/*.js?(x)'"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.12.1",
     "dotenv": "^16.4.5",
     "openai": "^4.29.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-auto-fix": "^1.0.4",
+    "eslint-plugin-react": "^7.34.1"
   }
 }
