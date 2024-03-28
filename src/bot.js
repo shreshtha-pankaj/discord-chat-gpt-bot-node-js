@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits, Partials } from "discord.js";
 import "dotenv/config";
 import OpenAI from "openai";
 
@@ -9,11 +9,18 @@ const openai = new OpenAI({
 
 const client = new Client({
   intents: [
-    GatewayIntentBits.DirectMessages,
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.DirectMessageReactions,
     GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.MessageContent,
   ],
+  partials : [
+    Partials.Message,
+    Partials.Channel,
+    Partials.Reaction,
+  ]
 });
 client.on("ready", () => {
   console.log("Bot ready!");
@@ -28,10 +35,7 @@ async function callOpenAi(prompt) {
   return completion;
 }
 
-client.on("messageCreate", function (discordMessage) {
-  if (discordMessage.author.bot) return;
-  discordMessage.reply(`Loading please wait...`);
-
+function handleEmptyGuilds(discordMessage) {
   callOpenAi(discordMessage.content).then((response) => {
     if (response && response.choices && response.choices.length > 0) {
       discordMessage.reply(`${response.choices[0].message.content.trim()}`);
@@ -39,6 +43,29 @@ client.on("messageCreate", function (discordMessage) {
       discordMessage.reply("Sorry can't connect to GPT");
     }
   });
+}
+
+function handleNonEmptyGuilds(discordMessage) {
+  callOpenAi(discordMessage.content).then((response) => {
+    if (response && response.choices && response.choices.length > 0) {
+      discordMessage.reply(`${response.choices[0].message.content.trim()}`);
+    } else {
+      discordMessage.reply("Sorry can't connect to GPT");
+    }
+  });
+}
+
+
+client.on("messageCreate", function (discordMessage) {
+  if (discordMessage.author.bot) return;
+  
+  if (discordMessage.guildId) {
+    // handle dms
+    handleEmptyGuilds(discordMessage);
+  } else{
+    handleNonEmptyGuilds(discordMessage);
+  }
   return;
 });
+
 client.login(token);
